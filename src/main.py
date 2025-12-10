@@ -11,6 +11,11 @@ class NetworkTopology:
         self.links = []
         self.graph = {}
 
+    def setup_topology(self, edge_data_path, node_data_path):
+        self.set_links_from_file(edge_data_path)
+        self.create_nodes_from_file(node_data_path)
+        self.create_graph()
+
     def create_nodes_from_file(self, file_path):
         nodes_file = read_file(file_path)
         for n in nodes_file:
@@ -30,7 +35,6 @@ class NetworkTopology:
         for node in self.nodes:
             self.graph[node.id] = node.adjacency_list
         
-
 class Node:
     def __init__(self, id: int, processing_delay: float, node_reliability: float, network_topology: NetworkTopology):
         self.id = id
@@ -46,7 +50,6 @@ class Node:
 
             elif link.node1_id > self.id:
                 break
-
 
     def __str__(self):
         return f'id: {self.id}, processing_delay: {self.processing_delay}, node_reliability: {self.node_reliability}'
@@ -67,6 +70,7 @@ class Path:
         self.network_topology = network_topology
         self.nodes = nodes
         self.links = []
+        self.assign_links()
 
     def assign_links(self):
         for link in self.network_topology.links:
@@ -80,8 +84,11 @@ class Path:
                     self.links.append(link)
 
     def __str__(self):
+        result = ' '
         for node in self.nodes:
-            print(f"{node.id} -> ", end=" ")
+            result = result + ' ' + str(node.id) + ' -> '
+        
+        return result[2: -3]
 
 class MetricsCalculator: 
     def __init__(self, path: Path):
@@ -153,12 +160,46 @@ def read_file(file_path):
     return result[1:]
 
 if __name__ == '__main__':
+    import random
     network_topology = NetworkTopology()
-    network_topology.set_links_from_file(EDGE_DATA_PATH)
-    network_topology.create_nodes_from_file(NODE_DATA_PATH)
-    network_topology.create_graph()
-    print(network_topology.graph)
+    network_topology.setup_topology(EDGE_DATA_PATH, NODE_DATA_PATH)
 
+    # Başlangıç düğümünün komşularından başlayarak rastgele yol bulma test kodu
+    best_fitness = 9999
+    best_path = None
+
+    for i in range(100):
+
+        current_node = 12
+        random_path = [current_node]
+
+        for i in range(20):
+            
+            adjacencies = network_topology.graph[current_node]
+
+            if len(adjacencies) >= 1:
+                r = random.randint(0, len(adjacencies) - 1)
+                current_node = adjacencies[r]
+                random_path.append(current_node)
+            else:
+                break
+
+        nodes = []
+        for i in range(len(random_path)):
+            nodes.append(network_topology.nodes[random_path[i]])
+
+        path = Path(network_topology, nodes)
+        print(path)
+        total_cost = weighted_sum_method(path, 0.33, 0.34, 0.33)
+        print(f"Fitness: {total_cost}\n")
+        if total_cost < best_fitness:
+            best_path = path
+            best_fitness = total_cost
+    
+    print()
+    print('=*' * 35)
+    print(f'En iyi yol: {best_path} \nEn iyi fitness: {best_fitness}')
+    print('=*' * 35)
 
     # En iyi yolu bulma algoritması uygulanması (başka dosyada geliştirilecek ve burada import edilip parametreleri verilerek kullanılacaktır.)
     
