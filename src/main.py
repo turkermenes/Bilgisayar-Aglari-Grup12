@@ -6,7 +6,7 @@ NODE_DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "node_dat
 
 class NetworkTopology:
     def __init__(self, connection_probability=0.4):
-        self.connection_probabability = connection_probability
+        self.connection_probability = connection_probability
         self.nodes = []
         self.links = []
         self.graph = {}
