@@ -4,16 +4,23 @@ import networkx as nx
 
 class GeneticAlgorithm:
     
-    MAX_POPULATION_SIZE = 20
-    MUTATION_RATE = 0.2
-    GENERATIONS = 200
-
     def __init__(self, network_topology):
         self.network_topology = network_topology
+        self.set_configurations()
 
+    def set_configurations(self, population_size=100, mutation_rate=0.2, generations=25, elitisim_percentage=0.1, tournament_size=25, max_stagnation=15):
+        self.POPULATION_SIZE = population_size
+        self.MUTATION_RATE = mutation_rate
+        self.GENERATIONS = generations
+        self.ELITISM_PERCENTAGE = elitisim_percentage
+        self.TOURNAMENT_SIZE = tournament_size
+        self.MAX_STAGNATION = max_stagnation
+        
+    # Popülasyonda birden fazla aynı kromozom olabiliyor!
     def initialise_population(self, pop_size, source_node_id: int, target_node_id: int, bandwidth: int):
         population = []
         
+        # while döngüsünde takılı kalabilir uygun rota yoksa.
         while len(population) < pop_size:
 
             T = nx.Graph(self.network_topology.G)
@@ -22,7 +29,8 @@ class GeneticAlgorithm:
             adjacencies = T.adj[random_chromosome[-1]]
             temp_node_id = random.choice(list(adjacencies.keys()))
             min_bandwidth = np.inf
-            
+            temp_bandwidth = np.inf
+
             while temp_node_id != target_node_id:
                 
                 random_chromosome.append(temp_node_id)
@@ -82,6 +90,7 @@ class GeneticAlgorithm:
 
         return float(fitness)
     
+    # iki parent da aynı olabiliyor. 
     def tournament_selection(self, population, tournament_size):
         selected_parents = []
         for _ in range(2):
@@ -131,7 +140,6 @@ class GeneticAlgorithm:
     def repair_route():
         pass
 
-
     def mutation(self, chromosome, mutation_rate):
         mutated_chromosome = chromosome
 
@@ -158,13 +166,74 @@ class GeneticAlgorithm:
                     mutated_chromosome[i] = new_node
         
         return mutated_chromosome
+    
+    # hızlı test icin insertion sort uyguladım daha hızlı bir sort algoritması uygulanmalı.
+    # fitness hesaplarken kullanılan w ağırlık katsayıları parametreli olarak alınmalı sabit olmamalı.
+    def sort_population(self, population):
+        sorted = population.copy()
 
+        for j in range(1, len(sorted)):
+            key = sorted[j]
+            i = j - 1
+            key_fitness = self.calculate_fitness(key, 0.33, 0.33, 0.33)
+            i_fitness = self.calculate_fitness(sorted[i], 0.33, 0.33, 0.33)
+            while i >= 0 and i_fitness > key_fitness:
+                sorted[i + 1] = sorted[i]
+                i = i - 1
+                i_fitness = self.calculate_fitness(sorted[i], 0.33, 0.33, 0.33)
+            sorted[i + 1] = key
+        
+        return sorted
 
     def print_population_results():
         pass
 
+    def genetic_algorithm(self, source_node_id: int, target_node_id: int, demand_bandwidth: int):
+        population = self.initialise_population(self.POPULATION_SIZE, source_node_id, target_node_id, demand_bandwidth)
+
+        population = self.sort_population(population)
+
+        best_fitness = float('inf')
+        stagnation_counter = 0
+
+        best_routes_per_generation = []
+
+        for generation in range(self.GENERATIONS):
+            new_population = []
+
+            elite_chromosomes = population[:int(self.ELITISM_PERCENTAGE * self.POPULATION_SIZE)]
+            new_population.extend(elite_chromosomes)
+
+            while len(new_population) < self.POPULATION_SIZE:
+                parent1, parent2 = self.tournament_selection(population, self.TOURNAMENT_SIZE)
+
+                offspring1, offspring2 = self.crossover(parent1, parent2)
+                offspring3 = self.mutation(offspring1, self.MUTATION_RATE)
+                offspring4 = self.mutation(offspring1, self.MUTATION_RATE)
+
+                new_population.extend([offspring1, offspring2, offspring3, offspring4])
+
+            population = new_population
+            population = self.sort_population(population)
+
+            best_chromosome = population[0]
+            best_routes_per_generation.append(best_chromosome)
+
+            current_best_fitness = self.calculate_fitness(best_chromosome, 0.33, 0.33, 0.33)
+            if current_best_fitness < best_fitness:
+                best_fitness = current_best_fitness
+                print(f'Generation {generation} best fitness: {best_fitness}')
+                stagnation_counter = 0
+            else:
+                stagnation_counter += 1
+
             
+            if stagnation_counter >= self.MAX_STAGNATION:
+                print(f"Durgunluk dolayısıyla jenerasyon {generation}'te sonlandırılıyor.")
+                break
 
+        if generation == self.GENERATIONS - 1:
+            print("Maksimum jenerasyon sayısına ulaşıldığı için sonlandırılıyor.")
 
-    def genetic_algorithm():
-        pass
+        print(f"Best fitness değeri: {best_fitness}")
+        print(f"Bulunan en iyi rota: {best_chromosome}")

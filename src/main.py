@@ -14,7 +14,7 @@ class NetworkTopology:
         self.G = None
         self.node_data_path = node_data_path
         self.edge_data_path = edge_data_path
-        
+
     def setup_topology(self):
         self.create_nodes_from_file()
         self.build_graph()
@@ -24,18 +24,27 @@ class NetworkTopology:
         for n in nodes_file:
             seperated = n.split(';')
             self.nodes[int(seperated[0])] = [float(seperated[1]), float(seperated[2])]
- 
+
     def build_graph(self):
         self.G = nx.Graph()
         links_file = read_file(self.edge_data_path)
         for l in links_file:
             seperated = l.split(';')
             self.G.add_edge(int(seperated[0]), int(seperated[1]), bandwidth=int(seperated[2]), delay=int(seperated[3]), reliability=float(seperated[4]))
-    
+
     def draw_graph(self):
         pass
 
-        
+def read_demand_file(file_path):
+    result = []
+    lines = read_file(file_path)
+    for line in lines:
+        seperated = line.split(';')
+        values = (int(seperated[0]), int(seperated[1]), int(seperated[2]))
+        result.append(values)
+
+    return result
+
 def read_file(file_path):
     result = []
 
@@ -50,26 +59,18 @@ def read_file(file_path):
 if __name__ == '__main__':
     network_topology = NetworkTopology(NODE_DATA_PATH, EDGE_DATA_PATH)
     network_topology.setup_topology()
-    # print(network_topology.G.edges())
+
     ga = GeneticAlgorithm(network_topology)
-    population = ga.initialise_population(10, 211, 150, 502)
-    #print(population)
-    #print(sorted(ga.calculate_fitness(population, 0.33, 0.33, 0.33)))
-    parents = ga.tournament_selection(population, 4)
-    # print(parents)
+    ga.set_configurations(population_size=100, mutation_rate=0.2, generations=25, elitisim_percentage=0.1, tournament_size=25, max_stagnation=15)
 
-    # print('*' * 25)
+    demands = read_demand_file(DEMAND_DATA_PATH)
+    count = 1
+    for demand in demands:
+        print('*-' * 20)
+        print(f"{count}. Talep: source_node_id: {demand[0]}, target_node_id={demand[1]}, demand_bandwidth={demand[2]}")
+        ga.genetic_algorithm(source_node_id=demand[0], target_node_id=demand[1], demand_bandwidth=demand[2])
+        count += 1
+        print()
+        print()
 
-    # print(ga.crossover(parents[0], parents[1]))
-
-    chromosome = parents[0]
-    print(chromosome)
-    print("MUTASYON SONRASI: ")
-    print(ga.mutation(chromosome, 0.2))
-
-
-
-
-
-
-    
+    print('*-' * 20)
