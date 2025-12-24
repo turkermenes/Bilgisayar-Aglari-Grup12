@@ -9,6 +9,7 @@ EDGE_DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "edge_dat
 NODE_DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "node_data.csv")
 
 class NetworkTopology:
+<<<<<<< HEAD
     def __init__(self, node_data_path, edge_data_path):
         self.nodes = {}
         self.G = None
@@ -18,6 +19,13 @@ class NetworkTopology:
     def setup_topology(self):
         self.create_nodes_from_file()
         self.build_graph()
+=======
+    def __init__(self, connection_probability=0.4):
+        self.connection_probability = connection_probability
+        self.nodes = []
+        self.links = []
+        self.graph = {}
+>>>>>>> b73fcde6478714a4cd6c00be60d4647261cba39e
 
     def create_nodes_from_file(self):
         nodes_file = read_file(self.node_data_path)
