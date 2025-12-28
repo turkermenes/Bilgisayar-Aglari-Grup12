@@ -63,14 +63,37 @@ if __name__ == '__main__':
     ga = GeneticAlgorithm(network_topology)
     ga.set_configurations(population_size=100, mutation_rate=0.2, generations=25, elitisim_percentage=0.1, tournament_size=25, max_stagnation=15)
 
+    senaryolar = {
+        "Dengeli":   {'delay': 0.33, 'reliability': 0.33, 'resource': 0.33}
+    }
+
     demands = read_demand_file(DEMAND_DATA_PATH)
     count = 1
     for demand in demands:
-        print('*-' * 20)
-        print(f"{count}. Talep: source_node_id: {demand[0]}, target_node_id={demand[1]}, demand_bandwidth={demand[2]}")
-        ga.genetic_algorithm(source_node_id=demand[0], target_node_id=demand[1], demand_bandwidth=demand[2])
+        source = demand[0]
+        target = demand[1]
+        bw = demand[2]
+        
+        print('=' * 60)
+        print(f"{count}. TALEP: {source} -> {target} (Bant Genişliği: {bw} Mbps)")
+        print('=' * 60)
+
+        for senaryo_adi, agirliklar in senaryolar.items():
+            print(f"\n--- Senaryo: {senaryo_adi} {agirliklar} ---")
+
+            best_route = ga.genetic_algorithm(
+                source_node_id=source, 
+                target_node_id=target, 
+                demand_bandwidth=bw,
+                weights=agirliklar  
+            )
+
+            if best_route:
+                print(f"SONUÇ: Rota BAŞARIYLA bulundu! (Adım Sayısı: {len(best_route)})")
+            else:
+                print(f"SONUÇ: Rota BULUNAMADI.")
+            
         count += 1
-        print()
-        print()
+        print('\n\n')
 
     print('*-' * 20)
