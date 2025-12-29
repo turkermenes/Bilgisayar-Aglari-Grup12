@@ -1,7 +1,8 @@
 import os
 import random
 import networkx as nx
-from ga import GeneticAlgorithm
+# from ga import GeneticAlgorithm
+from aco_standalone import ACO
 import matplotlib.pyplot as plt
 
 DEMAND_DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "demand_data.csv")
@@ -60,40 +61,18 @@ if __name__ == '__main__':
     network_topology = NetworkTopology(NODE_DATA_PATH, EDGE_DATA_PATH)
     network_topology.setup_topology()
 
-    ga = GeneticAlgorithm(network_topology)
-    ga.set_configurations(population_size=100, mutation_rate=0.2, generations=25, elitisim_percentage=0.1, tournament_size=25, max_stagnation=15)
-
-    senaryolar = {
-        "Dengeli":   {'delay': 0.33, 'reliability': 0.33, 'resource': 0.33}
-    }
+    aco = ACO(network_topology)
+    aco.set_configurations(ants=50, iterations=100, alpha=1.0, beta=2.0, evaporation=0.5)  # Örnek konfigürasyon, aco_standalone.py'ye göre uyarla
 
     demands = read_demand_file(DEMAND_DATA_PATH)
     count = 1
     for demand in demands:
-        source = demand[0]
-        target = demand[1]
-        bw = demand[2]
-        
-        print('=' * 60)
-        print(f"{count}. TALEP: {source} -> {target} (Bant Genişliği: {bw} Mbps)")
-        print('=' * 60)
-
-        for senaryo_adi, agirliklar in senaryolar.items():
-            print(f"\n--- Senaryo: {senaryo_adi} {agirliklar} ---")
-
-            best_route = ga.genetic_algorithm(
-                source_node_id=source, 
-                target_node_id=target, 
-                demand_bandwidth=bw,
-                weights=agirliklar  
-            )
-
-            if best_route:
-                print(f"SONUÇ: Rota BAŞARIYLA bulundu! (Adım Sayısı: {len(best_route)})")
-            else:
-                print(f"SONUÇ: Rota BULUNAMADI.")
-            
+        print('*-' * 20)
+        print(f"{count}. Talep: source_node_id: {demand[0]}, target_node_id={demand[1]}, demand_bandwidth={demand[2]}")
+    
+        aco.optimize(source_node_id=demand[0], target_node_id=demand[1], demand_bandwidth=demand[2])  
         count += 1
-        print('\n\n')
+        print()
+        print()
 
     print('*-' * 20)
