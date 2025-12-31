@@ -11,7 +11,7 @@ class GeneticAlgorithm:
         self.G = network_topology.G
         self.set_configurations()
 
-    def set_configurations(self, population_size=200, mutation_rate=0.2, generations=1000, elitism_percentage=0.05, tournament_size=3, max_stagnation=50):
+    def set_configurations(self, population_size=200, mutation_rate=0.2, generations=1000, elitism_percentage=0.05, tournament_size=3, max_stagnation=50, seed=None):
         '''
         :param population_size: Bu parametre popülasyonumuzda kaç kromozom (rota) olacağını belirler. 
         :param mutation_rate: Bu parametre bir kromozomdaki ara düğümlerden her birisi için mutasyon gerçekleşme oranını ifade eder. 0.0 ile 1.0 arasında değer alır.
@@ -27,6 +27,10 @@ class GeneticAlgorithm:
         self.ELITISM_PERCENTAGE = elitism_percentage
         self.TOURNAMENT_SIZE = tournament_size
         self.MAX_STAGNATION = max_stagnation
+
+        if seed != None:
+            random.seed(seed)
+            np.random.seed(seed)
 
     # Bu metotta başlangıç popülasyonumuzu kaynak, hedef düğüm ve talep edilen bant genişliğine göre oluşturuyoruz. Popülasyon, kromozomlardan oluşur.
     # Her bir kromozom bulunan rastgele bir rotayı temsil etmektedir. 
@@ -292,10 +296,17 @@ class GeneticAlgorithm:
         # Başlangıç popülasyonumuzu oluşturuyoruz.
         population = self.initialise_population(self.POPULATION_SIZE, source_node_id, target_node_id, demand_bandwidth)
 
+        
+
         if not population:
             print(f"Uyarı: {source_node_id} -> {target_node_id} için başlangıç popülasyonu oluşturulamadı.")
             return None
 
+        if len(population) == 1:
+            best_fitness = self.calculate_fitness(population[0], weights['delay'], weights['reliability'], weights['resource'])
+            print(f'jenerasyon {1}/{self.GENERATIONS}  best_fitness= {best_fitness} path= {population[0]}')
+            print(f'Tek yol bulunduğu için sonlandırıldı.')
+            return population[0]
         # Başlangıç popülasyonumuzu sıralayarak en iyi bireylerin en başa geçmesini sağlıyoruz.
         population = self.sort_population(population, weights)
         best_fitness = float('inf')
@@ -313,10 +324,14 @@ class GeneticAlgorithm:
             elite_chromosomes = population[:int(self.ELITISM_PERCENTAGE * self.POPULATION_SIZE)]
             new_population.extend(elite_chromosomes)
 
+            count = 0
+            max_count = self.POPULATION_SIZE * 10
             # Genetik algoritmada popülasyon boyutu sabit olmalıdır. Bu nedenle yeni oluşturduğumuz popülasyonun boyutu belirlediğimiz sayıya ulaşana kadar crossover ve mutasyon yaparak popülasyonu dolduruyoruz.
-            while len(new_population) < self.POPULATION_SIZE:
+            while len(new_population) < self.POPULATION_SIZE and count < max_count:
+                count += 1
+                tournament_size = min(self.TOURNAMENT_SIZE, len(population))
                 # Turnuva seçimi yapılarak ebeveynler belirlendi.
-                parent1, parent2 = self.tournament_selection(population, self.TOURNAMENT_SIZE, weights)
+                parent1, parent2 = self.tournament_selection(population, tournament_size, weights)
 
                 # İlk 2 yeni birey ebeveynlerin crossover geçirmesi sonucunda oluşturuldu.
                 offspring1, offspring2 = self.crossover(parent1, parent2)
@@ -348,7 +363,7 @@ class GeneticAlgorithm:
             current_best_fitness = self.calculate_fitness(best_chromosome, weights['delay'], weights['reliability'], weights['resource'])
             if current_best_fitness < best_fitness:
                 best_fitness = current_best_fitness
-                print(f'{generation}. jenerasyon en iyi fitness: {best_fitness}')
+                print(f'jenerasyon {generation + 1}/{self.GENERATIONS}  best_fitness= {best_fitness} path= {best_chromosome}')
                 # Önceki jenerasyonlardan daha iyi bir fitness değeri bulunduğu için duraksama sayacı sıfırlandı.
                 stagnation_counter = 0
             else:
@@ -361,9 +376,8 @@ class GeneticAlgorithm:
                 break
 
         if generation == self.GENERATIONS - 1:
-            print(f"Maksimum jenerasyon sayısına ulaşıldığı için {generation}. jenerasyonda sonlandırılıyor.")
+            print(f"Maksimum jenerasyon sayısına ulaşıldığı için {generation + 1}. jenerasyonda sonlandırılıyor.")
 
-        print(f"Best fitness değeri: {best_fitness}")
-        print(f"Bulunan en iyi rota: {best_chromosome}")
+        print(f"best_fitness= {best_fitness} path= {best_chromosome}")
 
         return best_chromosome

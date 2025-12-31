@@ -51,13 +51,14 @@ if __name__ == '__main__':
     network_topology = NetworkTopology(NODE_DATA_PATH, EDGE_DATA_PATH)
 
     ga = GeneticAlgorithm(network_topology)
-    ga.set_configurations(population_size=200, mutation_rate=0.2, generations=1000, elitism_percentage=0.05, tournament_size=3, max_stagnation=50)
+    ga.set_configurations(population_size=200, mutation_rate=0.2, generations=1000, elitism_percentage=0.05, tournament_size=3, max_stagnation=50, seed=None)
 
     senaryolar = {
         "Dengeli": {'delay': 0.33, 'reliability': 0.33, 'resource': 0.33}
     }
 
     demands = read_demand_file(DEMAND_DATA_PATH)
+
     count = 1
     for demand in demands:
         source = demand[0]
@@ -82,7 +83,6 @@ if __name__ == '__main__':
                 print(f"SONUÇ: Rota BAŞARIYLA bulundu! (Adım Sayısı: {len(best_route)})")
             else:
                 print(f"SONUÇ: Rota BULUNAMADI.")
-            
         count += 1
         print('\n\n')
 
