@@ -1,0 +1,77 @@
+.data-loader {
+  margin-bottom: 2rem;
+}
+
+.data-loader h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.file-input-group {
+  margin-bottom: 1rem;
+}
+
+.file-input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.file-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.file-button {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: white;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-button:hover {
+  background: #f5f5f5;
+  border-color: #667eea;
+}
+
+.load-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.load-button:hover:not(:disabled) {
+  background: #5568d3;
+}
+
+.load-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #fee;
+  color: #c33;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+

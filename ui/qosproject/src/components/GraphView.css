@@ -1,0 +1,42 @@
+.graph-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: white;
+}
+
+.graph-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/world-map.jpg");
+ 
+  background-size: 100% 100%; 
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.55;
+  filter: saturate(1.05) contrast(1.05);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.graph-cy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+
+:global(.path-node) {
+  background-color: #ff0000 !important;
+  border-color: #000000 !important;
+  border-width: 4px !important;
+  z-index: 9999 !important;
+}
+
+:global(.path-edge) {
+  line-color: #ff0000 !important;
+  width: 10px !important;
+  opacity: 1 !important;
+  z-index: 9999 !important;
+}

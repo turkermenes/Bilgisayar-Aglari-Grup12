@@ -1,0 +1,109 @@
+.controls {
+  margin-bottom: 2rem;
+}
+
+.controls h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.control-group select,
+.control-group input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.demand-selector {
+  margin-bottom: 0.5rem;
+}
+
+.weight-controls {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.weight-item {
+  margin-bottom: 1rem;
+}
+
+.weight-item:last-child {
+  margin-bottom: 0;
+}
+
+.weight-item label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.weight-item input[type="range"] {
+  width: 100%;
+}
+
+.weight-sum {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #ddd;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #667eea;
+  text-align: center;
+}
+
+.run-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #764ba2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.run-button:hover:not(:disabled) {
+  background: #5a3a7a;
+}
+
+.run-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.test-button {
+  width: 100%;
+  padding: 0.5rem;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.test-button:hover {
+  background: #45a049;
+}
+

@@ -1,0 +1,77 @@
+.results {
+  margin-bottom: 2rem;
+}
+
+.results h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.results-empty {
+  color: #999;
+  font-style: italic;
+  padding: 1rem;
+  text-align: center;
+}
+
+.results-error {
+  background: #fee;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #fcc;
+}
+
+.result-section {
+  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.result-section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #555;
+}
+
+.path-display {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #333;
+  word-break: break-all;
+  border: 1px solid #ddd;
+}
+
+.metrics-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.metric-item label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.metric-item value {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+

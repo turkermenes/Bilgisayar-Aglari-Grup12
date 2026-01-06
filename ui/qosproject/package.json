@@ -1,0 +1,36 @@
+{
+  "name": "qos-routing-app",
+  "version": "1.0.0",
+  "description": "QoS Multi-Objective Routing with Meta-Heuristic and RL Approaches",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev:react\" \"npm run dev:electron\"",
+    "dev:react": "vite",
+    "dev:electron": "npm run build:electron && wait-on tcp:5173 && electron .",
+    "build": "npm run build:react && npm run build:electron",
+    "build:react": "vite build",
+    "build:electron": "tsc -p tsconfig.main.json",
+    "preview": "vite preview"
+  },
+  "keywords": ["qos", "routing", "aco", "genetic-algorithm", "electron"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "cytoscape": "^3.27.0",
+    "cytoscape-cose-bilkent": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/node": "^20.10.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "electron": "^28.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0"
+  }
+}
+
